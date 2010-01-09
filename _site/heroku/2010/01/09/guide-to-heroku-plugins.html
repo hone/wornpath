@@ -2,7 +2,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-		<title>wornpath - hone.heroku.com</title>
+		<title>wornpath - Guide to Heroku Plugins</title>
 		<link rel="stylesheet" type="text/css" href="/css/style.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="/css/syntax.css" media="screen" />
 		<meta name="author" content="Terence Lee" />
@@ -20,9 +20,8 @@
 		</div>
 		<div id="content">
 			<div id="right">
-				
-<h2><a href="/heroku/2010/01/09/guide-to-heroku-plugins.html">Guide to Heroku Plugins</a></h2>
-<div id="date">published 09 Jan 2010</div>
+				<h2>Guide to Heroku Plugins</h2>
+<p>
 <p>As of <a href="http://github.com/heroku/heroku/commits/v1.5">heroku gem 1.5</a>, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve of it and provide a way for others to get those changes.  I had three features that didn&#8217;t make it into earlier versions of the heroku gem which are now pluginified and can be found here:</p>
 <ul>
 	<li><a href="http://github.com/hone/heroku_switch_command">switch command</a> &#8211; switches the default heroku remote, for managing multiple apps</li>
@@ -111,16 +110,7 @@
 </code></pre>
 </div><h3>Caveats</h3>
 <p>I know ddollar has added in a new pluggable help system.  I&#8217;ll update my switch command to reflect this change and the blog post as well.  Versioning and depndency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with <a href="http://github.com/dazuma/versionomy/">versionomy</a> or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.</p>
-<a id="more" href="/heroku/2010/01/09/guide-to-heroku-plugins.html#disqus">Comments &raquo;</a>
-
-<hr />
-
-<h2>archive</h2>
-<ul id="archive">
-	
-	<li><a href="/heroku/2010/01/09/guide-to-heroku-plugins.html">Guide to Heroku Plugins</a> - <abbr>09 Jan 2010</abbr></li>
-	
-</ul>
+</p>
 
 			</div>
 
