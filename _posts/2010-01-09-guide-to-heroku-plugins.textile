@@ -3,7 +3,7 @@ layout: post
 title: Guide to Heroku Plugins
 category: heroku
 ---
-As of "heroku gem 1.5":http://github.com/heroku/heroku/commits/v1.5, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve of it and provide a way for others to get those changes.  I had three features that didn't make it into earlier versions of the heroku gem which are now pluginified and can be found here:
+As of "heroku gem 1.5":http://github.com/heroku/heroku/commits/v1.5, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve it and provide a way for others to get those changes.  I had three features that didn't make it into the heroku gem which are now pluginified and can be found here:
 
 * "switch command":http://github.com/hone/heroku_switch_command - switches the default heroku remote, for managing multiple apps
 * "tab complete console":http://github.com/hone/heroku_tab_complete_console - partial tab complete support for heroku console
@@ -11,7 +11,7 @@ As of "heroku gem 1.5":http://github.com/heroku/heroku/commits/v1.5, heroku intr
 
 h3. Usage
 
-Installing a gem is quite simple.  You just need to get the git url of the gem.  For example to install the colorize console plugin above, just do 
+Installing a gem is quite simple.  You just need to get the git url of the gem and run the install command.  For example to install the colorize console plugin above, just do 
 
 @heroku plugins:install git://github.com/hone/heroku_colorize_console.git@
 
