@@ -19,7 +19,7 @@ This will clone the git repo into your ~/.heroku/plugins directory and gets auto
 
 h3. Rolling your own
 
-Pedro designed the heroku plugin system around rails plugins.  The file structure is similar:
+Pedro based the heroku plugin system off of rails plugins.  The file structure is similar:
 
 {% highlight ruby %}
 |-- lib/
@@ -28,7 +28,7 @@ Pedro designed the heroku plugin system around rails plugins.  The file structur
 |-- init.rb
 {% endhighlight %}
 
-The @init.rb@ is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin my init.rb looks like this:
+The @init.rb@ is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin, my init.rb looks like this:
 
 {% highlight ruby %}
 require 'wirble'
@@ -49,7 +49,7 @@ alias_method :display, :display_with_colorize
 
 h4. New Commandments!
 
-When adding new commands into the heroku gem, if you're going to add a bunch whole set of features like @bundles@ or @addons@ then create your own class to do it.  If you're only adding in one simple command like the switch plugin, then just add it to @Heroku::Command::Base@.  Finally, don't forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:
+When adding new commands into the heroku gem, if you're going to add whole set of features like @bundles@ or @addons@ then create your own class to do it.  If you're only adding one simple command like the switch plugin, then just add it to @Heroku::Command::Base@.  Finally, don't forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:
 
 {% highlight ruby %}
 module Heroku::Command
