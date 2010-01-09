@@ -3,8 +3,110 @@ layout: post
 title: Guide to Heroku Plugins
 category: heroku
 ---
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse facilisis nisl quis erat. Quisque ac felis. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec eu turpis ut nisi fringilla feugiat. Vestibulum mollis elementum libero. Maecenas erat. Quisque auctor ultricies lacus. Mauris sollicitudin elit sed felis. Curabitur egestas suscipit lectus. Fusce tempor est quis lorem. Suspendisse bibendum, sem at luctus semper, ante lorem auctor diam, sit amet fringilla diam magna non metus. Ut eget nibh. Morbi felis eros, ultricies sed, auctor nec, tincidunt id, tellus. Maecenas eu massa. Donec gravida. Aliquam erat nisl, eleifend eget, aliquam ultricies, consectetuer in, orci. 
+As of "heroku gem 1.5":http://github.com/heroku/heroku/commits/v1.5, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve of it and provide a way for others to get those changes.  I had three features that didn't make it into earlier versions of the heroku gem which are now pluginified and can be found here:
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse facilisis nisl quis erat. Quisque ac felis. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec eu turpis ut nisi fringilla feugiat. Vestibulum mollis elementum libero. Maecenas erat. Quisque auctor ultricies lacus. Mauris sollicitudin elit sed felis. Curabitur egestas suscipit lectus. Fusce tempor est quis lorem. Suspendisse bibendum, sem at luctus semper, ante lorem auctor diam, sit amet fringilla diam magna non metus. Ut eget nibh. Morbi felis eros, ultricies sed, auctor nec, tincidunt id, tellus. Maecenas eu massa. Donec gravida. Aliquam erat nisl, eleifend eget, aliquam ultricies, consectetuer in, orci. 
+* "switch command":http://github.com/hone/heroku_switch_command - switches the default heroku remote, for managing multiple apps
+* "tab complete console":http://github.com/hone/heroku_tab_complete_console - partial tab complete support for heroku console
+* "colorize console":http://github.com/hone/heroku_colorize_console - color support with wirble on heroku console
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse facilisis nisl quis erat. Quisque ac felis. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Donec eu turpis ut nisi fringilla feugiat. Vestibulum mollis elementum libero. Maecenas erat. Quisque auctor ultricies lacus. Mauris sollicitudin elit sed felis. Curabitur egestas suscipit lectus. Fusce tempor est quis lorem. Suspendisse bibendum, sem at luctus semper, ante lorem auctor diam, sit amet fringilla diam magna non metus. Ut eget nibh. Morbi felis eros, ultricies sed, auctor nec, tincidunt id, tellus. Maecenas eu massa. Donec gravida. Aliquam erat nisl, eleifend eget, aliquam ultricies, consectetuer in, orci. 
+h3. Usage
+
+Installing a gem is quite simple.  You just need to get the git url of the gem.  For example to install the colorize console plugin above, just do 
+
+@heroku plugins:install git://github.com/hone/heroku_colorize_console.git@
+
+This will clone the git repo into your ~/.heroku/plugins directory and gets automatically loaded when running the heroku client now.  There currently is no way to disable certain gems that are already installed.  Also errors while loading/running the plugin are not cleanly handled by the heroku gem yet.
+
+h3. Rolling your own
+
+Pedro designed the heroku plugin system around rails plugins.  The file structure is similar:
+
+{% highlight ruby %}
+|-- lib/
+    |-- plugin files...
+|-- README
+|-- init.rb
+{% endhighlight %}
+
+The @init.rb@ is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin my init.rb looks like this:
+
+{% highlight ruby %}
+require 'wirble'
+require File.dirname(__FILE__) + '/lib/heroku_colorize_console'
+{% endhighlight %}
+
+When ovewriting an existing heroku gem method, tread carefully.  Try not to copy and paste the existing method into your plugin and then edit it there.  If possible use the alias_method_chain pattern from rails.  This is how I handle ovewriting @Heroku::Command::Base#display@
+
+{% highlight ruby %}
+def display_with_colorize(msg, newline=true)
+  msg = Wirble::Colorize.colorize(msg) if @options and @options[:colorize]
+  display_without_colorize(msg, newline)
+end
+
+alias_method :display_without_colorize, :display
+alias_method :display, :display_with_colorize
+{% endhighlight %}
+
+h4. New Commandments!
+
+When adding new commands into the heroku gem, if you're going to add a bunch whole set of features like @bundles@ or @addons@ then create your own class to do it.  If you're only adding in one simple command like the switch plugin, then just add it to @Heroku::Command::Base@.  Finally, don't forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:
+
+{% highlight ruby %}
+module Heroku::Command
+  class Base
+    DEFAULT_HEROKU_REMOTE_NAME = "heroku"
+ 
+    # switches which heroku app to use (sets it as the default)
+    def switch
+      unless @args.size > 0
+        raise(CommandFailed, "Need to specify heroku app to switch to")
+      end
+ 
+      git_repo = ::Git.open(Dir.pwd)
+      git_repo.remotes.each do |remote|
+        if remote.url.split(':').first == default_git_remote_host
+          begin
+            remote.remove
+            # remove command isn't working for ruby-git 1.2.5
+          rescue Git::GitExecuteError
+            shell("git remote rm #{remote.name}") end
+        end
+      end
+ 
+      remote_location = default_git_remote_path(@args.first)
+      git_repo.add_remote(DEFAULT_HEROKU_REMOTE_NAME, remote_location)
+    end
+ 
+    def default_git_remote_path(name)
+      "#{default_git_remote_host}:#{name}.git"
+    end
+ 
+    def default_git_remote_host
+      "git@#{heroku.host}"
+    end
+  end
+ 
+  class Help
+    def usage_with_switch_command
+      message = usage_without_switch_command
+      message += <<TEXT
+ 
+=== Switch Command
+ 
+switch <appname> # set as the default heroku remote, to run commands against by default
+ 
+ 
+TEXT
+ 
+      message
+    end
+ 
+    alias_method :usage_without_switch_command, :usage
+    alias_method :usage, :usage_with_switch_command
+  end
+end
+{% endhighlight %}
+
+h3. Caveats
+
+I know ddollar has added in a new pluggable help system.  I'll update my switch command to reflect this change and the blog post as well.  Versioning and depndency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with "versionomy":http://github.com/dazuma/versionomy/ or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.
