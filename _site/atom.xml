@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>wornpath</title>
+ <link href="http://hone.heroku.com/atom.xml" rel="self"/>
+ <link href="http://hone.heroku.com/"/>
+ <updated>2010-01-09T04:57:58-06:00</updated>
+ <id>http://hone.heroku.com/</id>
+ <author>
+   <name>Terence Lee</name>
+   <email>wornpath@hone.otherinbox.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>Guide to Heroku Plugins</title>
+   <link href="http://hone.heroku.com/heroku/2010/01/09/guide-to-heroku-plugins.html"/>
+   <updated>2010-01-09T00:00:00-06:00</updated>
+   <id>http://hone.heroku.com/heroku/2010/01/09/guide-to-heroku-plugins</id>
+   <content type="html">&lt;p&gt;As of &lt;a href=&quot;http://github.com/heroku/heroku/commits/v1.5&quot;&gt;heroku gem 1.5&lt;/a&gt;, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve it and provide a way for others to get those changes.  I had three features that didn&amp;#8217;t make it into the heroku gem which are now pluginified and can be found here:&lt;/p&gt;
+&lt;ul&gt;
+	&lt;li&gt;&lt;a href=&quot;http://github.com/hone/heroku_switch_command&quot;&gt;switch command&lt;/a&gt; &amp;#8211; switches the default heroku remote, for managing multiple apps&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;http://github.com/hone/heroku_tab_complete_console&quot;&gt;tab complete console&lt;/a&gt; &amp;#8211; partial tab complete support for heroku console&lt;/li&gt;
+	&lt;li&gt;&lt;a href=&quot;http://github.com/hone/heroku_colorize_console&quot;&gt;colorize console&lt;/a&gt; &amp;#8211; color support with wirble on heroku console&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Usage&lt;/h3&gt;
+&lt;p&gt;Installing a gem is quite simple.  You just need to get the git url of the gem and run the install command.  For example to install the colorize console plugin above, just do&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;heroku plugins:install git://github.com/hone/heroku_colorize_console.git&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This will clone the git repo into your ~/.heroku/plugins directory and gets automatically loaded when running the heroku client now.  There currently is no way to disable certain gems that are already installed.  Also errors while loading/running the plugin are not cleanly handled by the heroku gem yet.&lt;/p&gt;
+&lt;h3&gt;Rolling your own&lt;/h3&gt;
+&lt;p&gt;Pedro designed the heroku plugin system around rails plugins.  The file structure is similar:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plugin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;README&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rb&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;The &lt;code&gt;init.rb&lt;/code&gt; is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin my init.rb looks like this:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;wirble&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;/lib/heroku_colorize_console&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;When ovewriting an existing heroku gem method, tread carefully.  Try not to copy and paste the existing method into your plugin and then edit it there.  If possible use the alias_method_chain pattern from rails.  This is how I handle ovewriting &lt;code&gt;Heroku::Command::Base#display&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;display_with_colorize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newline&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Wirble&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Colorize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;colorize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;vi&quot;&gt;@options&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;and&lt;/span&gt; &lt;span class=&quot;vi&quot;&gt;@options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:colorize&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;display_without_colorize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display_without_colorize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display_with_colorize&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;h4&gt;New Commandments!&lt;/h4&gt;
+&lt;p&gt;When adding new commands into the heroku gem, if you&amp;#8217;re going to add a bunch whole set of features like &lt;code&gt;bundles&lt;/code&gt; or &lt;code&gt;addons&lt;/code&gt; then create your own class to do it.  If you&amp;#8217;re only adding in one simple command like the switch plugin, then just add it to &lt;code&gt;Heroku::Command::Base&lt;/code&gt;.  Finally, don&amp;#8217;t forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Heroku::Command&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Base&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;DEFAULT_HEROKU_REMOTE_NAME&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;heroku&amp;quot;&lt;/span&gt;
+ 
+    &lt;span class=&quot;c1&quot;&gt;# switches which heroku app to use (sets it as the default)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;switch&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;unless&lt;/span&gt; &lt;span class=&quot;vi&quot;&gt;@args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;CommandFailed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Need to specify heroku app to switch to&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+      &lt;span class=&quot;n&quot;&gt;git_repo&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Git&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pwd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;git_repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;remotes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;each&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;remote&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;remote&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;split&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;:&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;default_git_remote_host&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;begin&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;remote&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;remove&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;# remove command isn&amp;#39;t working for ruby-git 1.2.5&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;rescue&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Git&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;GitExecuteError&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;shell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;git remote rm &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;remote&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+      &lt;span class=&quot;n&quot;&gt;remote_location&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;default_git_remote_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;vi&quot;&gt;@args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;git_repo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;add_remote&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;DEFAULT_HEROKU_REMOTE_NAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;remote_location&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;default_git_remote_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;default_git_remote_host&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;.git&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;default_git_remote_host&lt;/span&gt;
+      &lt;span class=&quot;s2&quot;&gt;&amp;quot;git@&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;heroku&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+  &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Help&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;usage_with_switch_command&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;usage_without_switch_command&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;TEXT&lt;/span&gt;
+&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
+&lt;span class=&quot;sh&quot;&gt;=== Switch Command&lt;/span&gt;
+&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
+&lt;span class=&quot;sh&quot;&gt;switch &amp;lt;appname&amp;gt; # set as the default heroku remote, to run commands against by default&lt;/span&gt;
+&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
+&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
+&lt;span class=&quot;no&quot;&gt;TEXT&lt;/span&gt;
+ 
+      &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+    &lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage_without_switch_command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage_with_switch_command&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;h3&gt;Caveats&lt;/h3&gt;
+&lt;p&gt;I know ddollar has added in a new pluggable help system.  I&amp;#8217;ll update my switch command to reflect this change and the blog post as well.  Versioning and depndency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with &lt;a href=&quot;http://github.com/dazuma/versionomy/&quot;&gt;versionomy&lt;/a&gt; or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.&lt;/p&gt;</content>
+ </entry>
+ 
+ 
+</feed>
