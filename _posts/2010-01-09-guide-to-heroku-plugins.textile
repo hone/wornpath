@@ -109,4 +109,4 @@ end
 
 h3. Caveats
 
-I know ddollar has added in a new pluggable help system.  I'll update my switch command to reflect this change and the blog post as well.  Versioning and depndency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with "versionomy":http://github.com/dazuma/versionomy/ or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.
+I know ddollar has added in a new pluggable help system.  I'll update my switch command to reflect this change and the blog post as well.  Versioning and dependency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with "versionomy":http://github.com/dazuma/versionomy/ or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.
