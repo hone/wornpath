@@ -21,15 +21,21 @@
 		<div id="content">
 			<div id="right">
 				<h2>Guide to Heroku Plugins</h2>
+<div id="date">published 09 Jan 2010</div>
+<div id="categories">categories: 
+	
+	<a href="/heroku.html">heroku</a> 
+	
+</div>
 <p>
-<p>As of <a href="http://github.com/heroku/heroku/commits/v1.5">heroku gem 1.5</a>, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve of it and provide a way for others to get those changes.  I had three features that didn&#8217;t make it into earlier versions of the heroku gem which are now pluginified and can be found here:</p>
+<p>As of <a href="http://github.com/heroku/heroku/commits/v1.5">heroku gem 1.5</a>, heroku introduced a plugin system to their gem.  The significance of this is that now you can push your own features to the gem without waiting for the heroku team to approve it and provide a way for others to get those changes.  I had three features that didn&#8217;t make it into the heroku gem which are now pluginified and can be found here:</p>
 <ul>
 	<li><a href="http://github.com/hone/heroku_switch_command">switch command</a> &#8211; switches the default heroku remote, for managing multiple apps</li>
 	<li><a href="http://github.com/hone/heroku_tab_complete_console">tab complete console</a> &#8211; partial tab complete support for heroku console</li>
 	<li><a href="http://github.com/hone/heroku_colorize_console">colorize console</a> &#8211; color support with wirble on heroku console</li>
 </ul>
 <h3>Usage</h3>
-<p>Installing a gem is quite simple.  You just need to get the git url of the gem.  For example to install the colorize console plugin above, just do</p>
+<p>Installing a gem is quite simple.  You just need to get the git url of the gem and run the install command.  For example to install the colorize console plugin above, just do</p>
 <p><code>heroku plugins:install git://github.com/hone/heroku_colorize_console.git</code></p>
 <p>This will clone the git repo into your ~/.heroku/plugins directory and gets automatically loaded when running the heroku client now.  There currently is no way to disable certain gems that are already installed.  Also errors while loading/running the plugin are not cleanly handled by the heroku gem yet.</p>
 <h3>Rolling your own</h3>
@@ -115,6 +121,13 @@
 			</div>
 
 			<div id="left">
+				<div class="box">
+					<h2>categories:</h2>	
+					<ul>
+						<li><a href="/heroku.html">heroku</a> (1)</li>
+					</ul>
+				</div>
+
 				<div class="box">
 					<h2>interwebs:</h2>	
 					<ul>
