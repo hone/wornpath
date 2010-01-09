@@ -2,6 +2,12 @@
 layout: default
 ---
 <h2>{{ page.title }}</h2>
+<div id="date">published {{ page.date | date_to_string }}</div>
+<div id="categories">categories: 
+	{% for category in page.categories %}
+	<a href="/{{ category }}.html">{{ category }}</a> 
+	{% endfor %}
+</div>
 <p>
 {{ content }}
 </p>
