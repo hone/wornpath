@@ -4,7 +4,7 @@
  <title>wornpath</title>
  <link href="http://hone.heroku.com/atom.xml" rel="self"/>
  <link href="http://hone.heroku.com/"/>
- <updated>2010-01-09T04:57:58-06:00</updated>
+ <updated>2010-01-09T05:02:51-06:00</updated>
  <id>http://hone.heroku.com/</id>
  <author>
    <name>Terence Lee</name>
@@ -28,13 +28,13 @@
 &lt;p&gt;&lt;code&gt;heroku plugins:install git://github.com/hone/heroku_colorize_console.git&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This will clone the git repo into your ~/.heroku/plugins directory and gets automatically loaded when running the heroku client now.  There currently is no way to disable certain gems that are already installed.  Also errors while loading/running the plugin are not cleanly handled by the heroku gem yet.&lt;/p&gt;
 &lt;h3&gt;Rolling your own&lt;/h3&gt;
-&lt;p&gt;Pedro designed the heroku plugin system around rails plugins.  The file structure is similar:&lt;/p&gt;
+&lt;p&gt;Pedro based the heroku plugin system off of rails plugins.  The file structure is similar:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;lib&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;plugin&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;README&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rb&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;&lt;p&gt;The &lt;code&gt;init.rb&lt;/code&gt; is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin my init.rb looks like this:&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;The &lt;code&gt;init.rb&lt;/code&gt; is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin, my init.rb looks like this:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;wirble&amp;#39;&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;/lib/heroku_colorize_console&amp;#39;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
@@ -48,7 +48,7 @@
 &lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display_with_colorize&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;h4&gt;New Commandments!&lt;/h4&gt;
-&lt;p&gt;When adding new commands into the heroku gem, if you&amp;#8217;re going to add a bunch whole set of features like &lt;code&gt;bundles&lt;/code&gt; or &lt;code&gt;addons&lt;/code&gt; then create your own class to do it.  If you&amp;#8217;re only adding in one simple command like the switch plugin, then just add it to &lt;code&gt;Heroku::Command::Base&lt;/code&gt;.  Finally, don&amp;#8217;t forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:&lt;/p&gt;
+&lt;p&gt;When adding new commands into the heroku gem, if you&amp;#8217;re going to add whole set of features like &lt;code&gt;bundles&lt;/code&gt; or &lt;code&gt;addons&lt;/code&gt; then create your own class to do it.  If you&amp;#8217;re only adding one simple command like the switch plugin, then just add it to &lt;code&gt;Heroku::Command::Base&lt;/code&gt;.  Finally, don&amp;#8217;t forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Heroku::Command&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Base&lt;/span&gt;
     &lt;span class=&quot;no&quot;&gt;DEFAULT_HEROKU_REMOTE_NAME&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;heroku&amp;quot;&lt;/span&gt;
