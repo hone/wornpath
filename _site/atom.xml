@@ -4,7 +4,7 @@
  <title>wornpath</title>
  <link href="http://hone.heroku.com/atom.xml" rel="self"/>
  <link href="http://hone.heroku.com/"/>
- <updated>2010-01-09T13:25:31-06:00</updated>
+ <updated>2010-01-09T19:31:43-06:00</updated>
  <id>http://hone.heroku.com/</id>
  <author>
    <name>Terence Lee</name>
@@ -48,7 +48,7 @@
 &lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:display_with_colorize&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;h4&gt;New Commandments!&lt;/h4&gt;
-&lt;p&gt;When adding new commands into the heroku gem, if you&amp;#8217;re going to add whole set of features like &lt;code&gt;bundles&lt;/code&gt; or &lt;code&gt;addons&lt;/code&gt; then create your own class to do it.  If you&amp;#8217;re only adding one simple command like the switch plugin, then just add it to &lt;code&gt;Heroku::Command::Base&lt;/code&gt;.  Finally, don&amp;#8217;t forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:&lt;/p&gt;
+&lt;p&gt;When adding new commands into the heroku gem, if you&amp;#8217;re going to add whole set of features like &lt;code&gt;bundles&lt;/code&gt; or &lt;code&gt;addons&lt;/code&gt; then create your own class to do it.  If you&amp;#8217;re only adding one simple command like the switch plugin, then just add it to &lt;code&gt;Heroku::Command::Base&lt;/code&gt;.  This is what my switch command looks like:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;Heroku::Command&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Base&lt;/span&gt;
     &lt;span class=&quot;no&quot;&gt;DEFAULT_HEROKU_REMOTE_NAME&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;heroku&amp;quot;&lt;/span&gt;
@@ -82,29 +82,19 @@
       &lt;span class=&quot;s2&quot;&gt;&amp;quot;git@&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;heroku&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
     &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
- 
-  &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Help&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;usage_with_switch_command&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;usage_without_switch_command&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;TEXT&lt;/span&gt;
-&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
-&lt;span class=&quot;sh&quot;&gt;=== Switch Command&lt;/span&gt;
-&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
-&lt;span class=&quot;sh&quot;&gt;switch &amp;lt;appname&amp;gt; # set as the default heroku remote, to run commands against by default&lt;/span&gt;
-&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
-&lt;span class=&quot;sh&quot;&gt; &lt;/span&gt;
-&lt;span class=&quot;no&quot;&gt;TEXT&lt;/span&gt;
- 
-      &lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
- 
-    &lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage_without_switch_command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;alias_method&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:usage_with_switch_command&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;Finally, don’t forget to add an entry into the help system, so people know how to use your new fangled command.  ddollar has rewritten the old heroku help system in &lt;a href=&quot;http://github.com/heroku/heroku/commits/v1.5.3&quot;&gt;heroku gem 1.5.3&lt;/a&gt;.  It&amp;#8217;s dead simple to add in help text.  For example my switch command uses this:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;no&quot;&gt;Heroku&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Command&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Help&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Switch Command&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;command&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;switch &amp;lt;appname&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;set as the default heroku remote, to run commands against by default&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;which returns this when running heroku help:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Switch&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;Command&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;appname&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;             &lt;span class=&quot;c1&quot;&gt;# set as the default heroku remote, to run commands against by default&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;h3&gt;Caveats&lt;/h3&gt;
-&lt;p&gt;I know ddollar has added in a new pluggable help system.  I&amp;#8217;ll update my switch command to reflect this change and the blog post as well.  Versioning and dependency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with &lt;a href=&quot;http://github.com/dazuma/versionomy/&quot;&gt;versionomy&lt;/a&gt; or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.&lt;/p&gt;</content>
+&lt;p&gt;Versioning and dependency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with &lt;a href=&quot;http://github.com/dazuma/versionomy/&quot;&gt;versionomy&lt;/a&gt; or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.&lt;/p&gt;</content>
  </entry>
  
  
