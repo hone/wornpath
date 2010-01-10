@@ -49,7 +49,7 @@ alias_method :display, :display_with_colorize
 
 h4. New Commandments!
 
-When adding new commands into the heroku gem, if you're going to add whole set of features like @bundles@ or @addons@ then create your own class to do it.  If you're only adding one simple command like the switch plugin, then just add it to @Heroku::Command::Base@.  Finally, don't forget to add an entry into the help system, so people know how to use your new fangled command.  This is what my switch command looks like:
+When adding new commands into the heroku gem, if you're going to add whole set of features like @bundles@ or @addons@ then create your own class to do it.  If you're only adding one simple command like the switch plugin, then just add it to @Heroku::Command::Base@.  This is what my switch command looks like:
 
 {% highlight ruby %}
 module Heroku::Command
@@ -85,28 +85,24 @@ module Heroku::Command
       "git@#{heroku.host}"
     end
   end
- 
-  class Help
-    def usage_with_switch_command
-      message = usage_without_switch_command
-      message += <<TEXT
- 
-=== Switch Command
- 
-switch <appname> # set as the default heroku remote, to run commands against by default
- 
- 
-TEXT
- 
-      message
-    end
- 
-    alias_method :usage_without_switch_command, :usage
-    alias_method :usage, :usage_with_switch_command
-  end
+{% endhighlight %}
+
+Finally, don’t forget to add an entry into the help system, so people know how to use your new fangled command.  ddollar has rewritten the old heroku help system in "heroku gem 1.5.3":http://github.com/heroku/heroku/commits/v1.5.3.  It's dead simple to add in help text.  For example my switch command uses this:
+
+{% highlight ruby %}
+Heroku::Command::Help.group('Switch Command') do |group|
+  group.command('switch <appname>', 'set as the default heroku remote, to run commands against by default')
 end
+{% endhighlight %}
+
+which returns this when running heroku help:
+
+{% highlight ruby %}
+=== Switch Command
+
+switch <appname>             # set as the default heroku remote, to run commands against by default
 {% endhighlight %}
 
 h3. Caveats
 
-I know ddollar has added in a new pluggable help system.  I'll update my switch command to reflect this change and the blog post as well.  Versioning and dependency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with "versionomy":http://github.com/dazuma/versionomy/ or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.
+Versioning and dependency issues are still yet to be sorted/handled by the heroku gem.  I think using something like git tags in conjunction with "versionomy":http://github.com/dazuma/versionomy/ or switching over to rubygems would be a good solution to those issues.  Lastly, I need to bring over my tests into these plugins and layout a good way to test heroku plugins.
