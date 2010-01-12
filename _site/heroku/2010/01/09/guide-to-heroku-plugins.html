@@ -59,13 +59,35 @@
 <span class="n">alias_method</span> <span class="ss">:display</span><span class="p">,</span> <span class="ss">:display_with_colorize</span>
 </code></pre>
 </div><h4>New Commandments!</h4>
-<p>When adding new commands into the heroku gem, if you&#8217;re going to add whole set of features like <code>bundles</code> or <code>addons</code> then create your own class to do it.  If you&#8217;re only adding one simple command like the switch plugin, then just add it to <code>Heroku::Command::Base</code>.  This is what my switch command looks like:</p>
+<p>When adding new commands into the heroku gem, namespace your plugin and inherit from <code>Heroku::Command::BaseWithApp</code>:</p>
 <div class="highlight"><pre><code class="ruby"><span class="k">module</span> <span class="nn">Heroku::Command</span>
-  <span class="k">class</span> <span class="nc">Base</span>
+  <span class="k">class</span> <span class="nc">PluginName</span> <span class="o">&lt;</span> <span class="no">BaseWithApp</span>
+    <span class="c1"># insert code here...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div><p>You can then go ahead and add in all the methods that correspond to your command.  The call <code>heroku plugins:install git://some_git_url.git</code> would be defined something like this:</p>
+<div class="highlight"><pre><code class="ruby"><span class="k">module</span> <span class="nn">Heroku::Command</span>
+  <span class="k">class</span> <span class="nc">Plugins</span> <span class="o">&lt;</span> <span class="no">BaseWithApp</span>
+    <span class="k">def</span> <span class="nf">install</span>
+      <span class="n">process_git_url</span><span class="p">(</span><span class="vi">@args</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="kp">private</span>
+    <span class="k">def</span> <span class="nf">process_git_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+      <span class="c1"># ...</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+</div><p>The command line is parsed as follows: <code>&lt;namespace class&gt;:&lt;method&gt; arg1, arg2, arg3...</code>.  Methods don&#8217;t take any arguments because the gem bundles them into the <code>@args</code> instance variable.  You can treat it like <code>ARGV</code> when doing command line ruby stuff.</p>
+<p>If you just want to do a single command, then you can define an <code>index</code> method in your class and call it as if it was defined in <code>Heroku::Command::App</code>.  The switch command is called this way: <code>heroku switch &lt;some app name&gt;</code>.  This is how it&#8217;s written:</p>
+<div class="highlight"><pre><code class="ruby"><span class="k">module</span> <span class="nn">Heroku::Command</span>
+  <span class="k">class</span> <span class="nc">Switch</span> <span class="o">&lt;</span> <span class="no">BaseWithApp</span>
     <span class="no">DEFAULT_HEROKU_REMOTE_NAME</span> <span class="o">=</span> <span class="s2">&quot;heroku&quot;</span>
  
     <span class="c1"># switches which heroku app to use (sets it as the default)</span>
-    <span class="k">def</span> <span class="nf">switch</span>
+    <span class="k">def</span> <span class="nf">index</span>
       <span class="k">unless</span> <span class="vi">@args</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">raise</span><span class="p">(</span><span class="no">CommandFailed</span><span class="p">,</span> <span class="s2">&quot;Need to specify heroku app to switch to&quot;</span><span class="p">)</span>
       <span class="k">end</span>
@@ -83,6 +105,7 @@
  
       <span class="n">remote_location</span> <span class="o">=</span> <span class="n">default_git_remote_path</span><span class="p">(</span><span class="vi">@args</span><span class="o">.</span><span class="n">first</span><span class="p">)</span>
       <span class="n">git_repo</span><span class="o">.</span><span class="n">add_remote</span><span class="p">(</span><span class="no">DEFAULT_HEROKU_REMOTE_NAME</span><span class="p">,</span> <span class="n">remote_location</span><span class="p">)</span>
+      <span class="nb">display</span><span class="p">(</span><span class="s2">&quot;Switched heroku remote to </span><span class="si">#{</span><span class="n">git_repo</span><span class="o">.</span><span class="n">remote</span><span class="p">(</span><span class="no">DEFAULT_HEROKU_REMOTE_NAME</span><span class="p">)</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">end</span>
  
     <span class="k">def</span> <span class="nf">default_git_remote_path</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
@@ -93,6 +116,7 @@
       <span class="s2">&quot;git@</span><span class="si">#{</span><span class="n">heroku</span><span class="o">.</span><span class="n">host</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="k">end</span>
   <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
 </div><p>Finally, don’t forget to add an entry into the help system, so people know how to use your new fangled command.  ddollar has rewritten the old heroku help system in <a href="http://github.com/heroku/heroku/commits/v1.5.3">heroku gem 1.5.3</a>.  It&#8217;s dead simple to add in help text.  For example my switch command uses this:</p>
 <div class="highlight"><pre><code class="ruby"><span class="no">Heroku</span><span class="o">::</span><span class="no">Command</span><span class="o">::</span><span class="no">Help</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s1">&#39;Switch Command&#39;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">group</span><span class="o">|</span>
