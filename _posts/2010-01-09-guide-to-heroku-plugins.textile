@@ -31,7 +31,11 @@ Pedro based the heroku plugin system off of rails plugins.  The file structure i
 The @init.rb@ is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin, my init.rb looks like this:
 
 {% highlight ruby %}
-require 'wirble'
+begin
+  require 'wirble'
+rescue LoadError
+  raise "wirble gem is missing. Please install wirble: gem install wirble"
+end
 require File.dirname(__FILE__) + '/lib/heroku_colorize_console'
 {% endhighlight %}
 
