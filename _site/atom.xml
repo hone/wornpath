@@ -4,7 +4,7 @@
  <title>wornpath</title>
  <link href="http://hone.heroku.com/atom.xml" rel="self"/>
  <link href="http://hone.heroku.com/"/>
- <updated>2010-01-11T23:21:54-06:00</updated>
+ <updated>2010-01-11T23:40:07-06:00</updated>
  <id>http://hone.heroku.com/</id>
  <author>
    <name>Terence Lee</name>
@@ -35,7 +35,11 @@
 &lt;span class=&quot;o&quot;&gt;|--&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rb&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;p&gt;The &lt;code&gt;init.rb&lt;/code&gt; is the file that gets loaded when the heroku gem gets run.  This file loads the rest of the plugin.  For example in my colorize console plugin, my init.rb looks like this:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;wirble&amp;#39;&lt;/span&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;begin&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;wirble&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;rescue&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;LoadError&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;wirble gem is missing. Please install wirble: gem install wirble&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;/lib/heroku_colorize_console&amp;#39;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;p&gt;When ovewriting an existing heroku gem method, tread carefully.  Try not to copy and paste the existing method into your plugin and then edit it there.  If possible use the alias_method_chain pattern from rails.  This is how I handle ovewriting &lt;code&gt;Heroku::Command::Base#display&lt;/code&gt;&lt;/p&gt;
