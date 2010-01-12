@@ -49,15 +49,44 @@ alias_method :display, :display_with_colorize
 
 h4. New Commandments!
 
-When adding new commands into the heroku gem, if you're going to add whole set of features like @bundles@ or @addons@ then create your own class to do it.  If you're only adding one simple command like the switch plugin, then just add it to @Heroku::Command::Base@.  This is what my switch command looks like:
+When adding new commands into the heroku gem, namespace your plugin and inherit from @Heroku::Command::BaseWithApp@:
 
 {% highlight ruby %}
 module Heroku::Command
-  class Base
+  class PluginName < BaseWithApp
+    # insert code here...
+  end
+end
+{% endhighlight %}
+
+You can then go ahead and add in all the methods that correspond to your command.  The call @heroku plugins:install git://some_git_url.git@ would be defined something like this:
+
+{% highlight ruby %}
+module Heroku::Command
+  class Plugins < BaseWithApp
+    def install
+      process_git_url(@args[0])
+    end
+
+    private
+    def process_git_url(url)
+      # ...
+    end
+  end
+end
+{% endhighlight %}
+
+The command line is parsed as follows: @<namespace class>:<method> arg1, arg2, arg3...@.  Methods don't take any arguments because the gem bundles them into the <code>@args</code> instance variable.  You can treat it like @ARGV@ when doing command line ruby stuff.
+
+If you just want to do a single command, then you can define an @index@ method in your class and call it as if it was defined in @Heroku::Command::App@.  The switch command is called this way: @heroku switch <some app name>@.  This is how it's written:
+
+{% highlight ruby %}
+module Heroku::Command
+  class Switch < BaseWithApp
     DEFAULT_HEROKU_REMOTE_NAME = "heroku"
  
     # switches which heroku app to use (sets it as the default)
-    def switch
+    def index
       unless @args.size > 0
         raise(CommandFailed, "Need to specify heroku app to switch to")
       end
@@ -75,6 +104,7 @@ module Heroku::Command
  
       remote_location = default_git_remote_path(@args.first)
       git_repo.add_remote(DEFAULT_HEROKU_REMOTE_NAME, remote_location)
+      display("Switched heroku remote to #{git_repo.remote(DEFAULT_HEROKU_REMOTE_NAME).url}")
     end
  
     def default_git_remote_path(name)
@@ -85,6 +115,7 @@ module Heroku::Command
       "git@#{heroku.host}"
     end
   end
+end
 {% endhighlight %}
 
 Finally, don’t forget to add an entry into the help system, so people know how to use your new fangled command.  ddollar has rewritten the old heroku help system in "heroku gem 1.5.3":http://github.com/heroku/heroku/commits/v1.5.3.  It's dead simple to add in help text.  For example my switch command uses this:
