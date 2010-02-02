@@ -4,13 +4,115 @@
  <title>wornpath</title>
  <link href="http://hone.heroku.com/atom.xml" rel="self"/>
  <link href="http://hone.heroku.com/"/>
- <updated>2010-01-11T23:40:07-06:00</updated>
+ <updated>2010-02-02T14:33:10-06:00</updated>
  <id>http://hone.heroku.com/</id>
  <author>
    <name>Terence Lee</name>
    <email>wornpath@hone.otherinbox.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Rails 2.3 and Bundler</title>
+   <link href="http://hone.heroku.com/rails/2010/02/02/rails-23-and-bundler.html"/>
+   <updated>2010-02-02T00:00:00-06:00</updated>
+   <id>http://hone.heroku.com/rails/2010/02/02/rails-23-and-bundler</id>
+   <content type="html">&lt;p&gt;Here at &lt;a href=&quot;http://www.otherinbox.com&quot;&gt;OtherInbox&lt;/a&gt;, we&amp;#8217;ve had some issues dealing with gem dependencies using &lt;code&gt;config.gem&lt;/code&gt;.  Luckily, &lt;a href=&quot;http://twitter.com/carllerche&quot;&gt;Carl Lerche&lt;/a&gt; and &lt;a href=&quot;http://yehudakatz.com/&quot;&gt;Yehuda Katz&lt;/a&gt; have made &lt;a href=&quot;http://github.com/wycats/bundler/&quot;&gt;Bundler&lt;/a&gt; for us.  Bundler has great dependency resolution and just works&amp;#8482;.  &lt;a href=&quot;http://yehudakatz.com/2010/02/01/bundler-0-9-heading-toward-1-0/&quot;&gt;They&amp;#8217;re also smoothing out deployment workflow issues.&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Getting Setup with Rails 2.3.x&lt;/h3&gt;
+&lt;p&gt;Setting up Bundler on Rails 2.3.x is fairly straightforward.  There&amp;#8217;s only 3 steps.&lt;/p&gt;
+&lt;p&gt;1. setup the Gemfile&lt;br /&gt;
+2. setup the preinitializer.rb&lt;br /&gt;
+3. monkey patch the boot.rb&lt;/p&gt;
+&lt;h4&gt;Setup the Gemfile&lt;/h4&gt;
+&lt;p&gt;The Gemfile is the manifest file that lists what gems are part of the application and what environment they belong in.  Bundler defaults the gems in &lt;code&gt;vendor/gems/&lt;/code&gt; and the binaries in &lt;code&gt;bin/&lt;/code&gt;.  Unfortunately, &lt;code&gt;vendor/gems/&lt;/code&gt; is special to rails, so you need to specify a different directoy to use: &lt;code&gt;bundle_path &quot;vendor/bundler_gems&quot;&lt;/code&gt;.  Specifying a gem is as easy as this:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;lt;gem name&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;The options are well optional.  You can specify the version number.  You can also specify what to require if the lib doesn&amp;#8217;t match gem name.  You will need to do this for gems from &lt;a href=&quot;http://www.github.com&quot;&gt;github&lt;/a&gt;, since they&amp;#8217;re prefixed with github usernames.  There&amp;#8217;s also a &lt;code&gt;:only&lt;/code&gt;  and &lt;code&gt;:except&lt;/code&gt; options for specifying which environments the gem should be in. See the following example:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;mislav-will_paginate&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;2.3.8&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:require_as&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;will_paginate&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:except&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;You can use &lt;code&gt;source&lt;/code&gt; to specify different gem sources outside of &lt;a href=&quot;http://rubyforge.org/&quot;&gt;rubyforge&lt;/a&gt; and &lt;a href=&quot;http://gemcutter.org&quot;&gt;gemcutter&lt;/a&gt; .  For instance, I have&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;http://gems.github.com&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;in my Gemfile to use github.&lt;/p&gt;
+&lt;p&gt;You use &lt;code&gt;only&lt;/code&gt; and &lt;code&gt;except&lt;/code&gt; blocks to specify multiple gems for a particular staging environment.&lt;/p&gt;
+&lt;p&gt;Here&amp;#8217;s my &lt;a href=&quot;http://github.com/hone/herocutter/blob/master/Gemfile&quot;&gt;example Gemfile&lt;/a&gt; for &lt;a href=&quot;http://herocutter.heroku.com&quot;&gt;herocutter&lt;/a&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;bundle_path&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;vendor/bundler_gems&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;rails&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;      &lt;span class=&quot;s1&quot;&gt;&amp;#39;2.3.5&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;postgres&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;clearance&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;  &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.8.4&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;gravtastic&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;2.2.0&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;formtastic&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.9.7&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;git&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;        &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.2.5&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;pacecar&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;    &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.2.0&amp;#39;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:test&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;factory_girl&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;     &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.2.3&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;cucumber&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;         &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.6.1&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;cucumber-rails&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;   &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.2.3&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;webrat&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;           &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.6.0&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;database_cleaner&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.4.2&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;shoulda&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;          &lt;span class=&quot;s1&quot;&gt;&amp;#39;2.10.2&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;rr&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;		          &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.10.5&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;redgreen&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;only&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:development&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;factory_girl&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;     &lt;span class=&quot;s1&quot;&gt;&amp;#39;1.2.3&amp;#39;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;n&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;                &lt;span class=&quot;s1&quot;&gt;&amp;#39;0.1.0&amp;#39;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;Don&amp;#8217;t forget to remove the gems from the &lt;code&gt;vendor/gems/&lt;/code&gt; directory and the &lt;code&gt;config.gem&lt;/code&gt; lines from your environment files.&lt;/p&gt;
+&lt;h5&gt;Caveat&lt;/h5&gt;
+&lt;p&gt;If you use &lt;code&gt;disable_system_gems&lt;/code&gt; to not search your system gems, it will not work on &lt;a href=&quot;http://www.heroku.com&quot;&gt;heroku&lt;/a&gt; since their system is dependent on a system install version of thin.&lt;/p&gt;
+&lt;p&gt;In a consulting project when I&amp;#8217;ve made the switch to bundler, all monkey patched gems I&amp;#8217;ve kept those inside &lt;code&gt;vendor/gems/&lt;/code&gt; as well as the appropriate &lt;code&gt;config.gem&lt;/code&gt; lines in the environment files.  If you need to require their dependencies in bundler, rails won&amp;#8217;t load the depencies properly when accessed in the &lt;code&gt;lib/&lt;/code&gt; directory.  For instance, in a monkey patch to lockdown I used &lt;a href=&quot;http://rubyforge.org/projects/parsetree/&quot;&gt;ParseTree&lt;/a&gt; and had to require that explicitly in &lt;code&gt;lib/lockdown/init.rb&lt;/code&gt;.&lt;/p&gt;
+&lt;h4&gt;Setup the preinitializer.rb&lt;/h4&gt;
+&lt;p&gt;This step is simple.  In your &lt;code&gt;config/preinitializer.rb&lt;/code&gt;, you need to get rails to load bundler in the path by adding:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/../vendor/bundler_gems/environment&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;h5&gt;Caveat&lt;/h5&gt;
+&lt;p&gt;In &lt;a href=&quot;http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/&quot;&gt;Yehuda&amp;#8217;s blog post&lt;/a&gt;, he says to insert the follow code in there as well:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Boot&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;run&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;load_initializer&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;extend_environment&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Initializer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:set_load_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;extend_environment&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Initializer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class_eval&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;old_load&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;instance_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:load_environment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;define_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:load_environment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;Bundler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;require_env&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;RAILS_ENV&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;old_load&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;call&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;I couldn&amp;#8217;t get it to work quite right in the preinitializer.  I instead stuck it in &lt;code&gt;config/boot.rb&lt;/code&gt;.&lt;/p&gt;
+&lt;h4&gt;Monkey Patch the boot.rb&lt;/h4&gt;
+&lt;p&gt;Instead of putting loading of the environment gems in &lt;code&gt;config/preinitializer.rb&lt;/code&gt;, I found it works better to monkey patch &lt;code&gt;config/boot.rb&lt;/code&gt; directly (got this from the &lt;a href=&quot;http://www.github.com/qrush/gemcutter&quot;&gt;gemcutter source&lt;/a&gt;).  We basically, need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of &lt;code&gt;config/boot.rb&lt;/code&gt; right before the &lt;code&gt;Rails.boot!&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Boot&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;run&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;load_initializer&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;extend_environment&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Initializer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:set_load_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+ 
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;extend_environment&lt;/span&gt;
+    &lt;span class=&quot;no&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Initializer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class_eval&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;old_load&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;instance_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:load_environment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;define_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:load_environment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
+        &lt;span class=&quot;no&quot;&gt;Bundler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;require_env&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;RAILS_ENV&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;old_load&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;call&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;&lt;p&gt;You can also refer to the &lt;code&gt;config/boot.rb&lt;/code&gt; &lt;a href=&quot;http://github.com/hone/herocutter/commit/250fcbef213c099d06eb7dc31cc117eba7789c64#diff-1&quot;&gt;on herocutter&lt;/a&gt; to see what I changed exactly.&lt;/p&gt;</content>
+ </entry>
  
  <entry>
    <title>Guide to Heroku Plugins</title>
