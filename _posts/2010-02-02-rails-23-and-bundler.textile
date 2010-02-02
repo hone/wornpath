@@ -1,0 +1,136 @@
+---
+layout: post
+title: Rails 2.3 and Bundler
+category: rails
+---
+Here at "OtherInbox":http://www.otherinbox.com, we've had some issues dealing with gem dependencies using <code>config.gem</code>.  Luckily, "Carl Lerche":http://twitter.com/carllerche and "Yehuda Katz":http://yehudakatz.com/ have made "Bundler":http://github.com/wycats/bundler/ for us.  Bundler has great dependency resolution and just works(TM).  "They're also smoothing out deployment workflow issues.":http://yehudakatz.com/2010/02/01/bundler-0-9-heading-toward-1-0/
+
+h3. Getting Setup with Rails 2.3.x
+
+Setting up Bundler on Rails 2.3.x is fairly straightforward.  There's only 3 steps.
+
+1. setup the Gemfile
+2. setup the preinitializer.rb
+3. monkey patch the boot.rb
+
+h4. Setup the Gemfile
+
+The Gemfile is the manifest file that lists what gems are part of the application and what environment they belong in.  Bundler defaults the gems in <code>vendor/gems/</code> and the binaries in <code>bin/</code>.  Unfortunately, <code>vendor/gems/</code> is special to rails, so you need to specify a different directoy to use: <code>bundle_path "vendor/bundler_gems"</code>.  Specifying a gem is as easy as this:
+
+{% highlight ruby %}
+gem "<gem name>", <options>
+{% endhighlight %}
+
+The options are well optional.  You can specify the version number.  You can also specify what to require if the lib doesn't match gem name.  You will need to do this for gems from "github":http://www.github.com, since they're prefixed with github usernames.  There's also a <code>:only</code>  and <code>:except</code> options for specifying which environments the gem should be in. See the following example:
+
+{% highlight ruby %}
+gem 'mislav-will_paginate', '2.3.8', :require_as => 'will_paginate', :except => :test
+{% endhighlight %}
+
+You can use <code>source</code> to specify different gem sources outside of "rubyforge":http://rubyforge.org/ and "gemcutter":http://gemcutter.org .  For instance, I have
+
+{% highlight ruby %}
+source "http://gems.github.com"
+{% endhighlight %}
+
+in my Gemfile to use github.
+
+You use <code>only</code> and <code>except</code> blocks to specify multiple gems for a particular staging environment.
+
+Here's my "example Gemfile":http://github.com/hone/herocutter/blob/master/Gemfile for "herocutter":http://herocutter.heroku.com:
+
+{% highlight ruby %}
+bundle_path "vendor/bundler_gems"
+
+gem 'rails',      '2.3.5'
+gem 'postgres'
+gem 'clearance',  '0.8.4'
+gem 'gravtastic', '2.2.0'
+gem 'formtastic', '0.9.7'
+gem 'git',        '1.2.5'
+gem 'pacecar',    '1.2.0'
+
+only :test do
+  gem 'factory_girl',     '1.2.3'
+  gem 'cucumber',         '0.6.1'
+  gem 'cucumber-rails',   '0.2.3'
+  gem 'webrat',           '0.6.0'
+  gem 'database_cleaner', '0.4.2'
+  gem 'shoulda',          '2.10.2'
+  gem 'rr',		          '0.10.5'
+  gem 'redgreen'
+end
+
+only :development do
+  gem 'factory_girl',     '1.2.3'
+  gem 'n',                '0.1.0'
+end
+{% endhighlight %}
+
+Don't forget to remove the gems from the <code>vendor/gems/</code> directory and the <code>config.gem</code> lines from your environment files.
+
+h5. Caveat
+
+If you use <code>disable_system_gems</code> to not search your system gems, it will not work on "heroku":http://www.heroku.com since their system is dependent on a system install version of thin.
+
+In a consulting project when I've made the switch to bundler, all monkey patched gems I've kept those inside <code>vendor/gems/</code> as well as the appropriate <code>config.gem</code> lines in the environment files.  If you need to require their dependencies in bundler, rails won't load the depencies properly when accessed in the <code>lib/</code> directory.  For instance, in a monkey patch to lockdown I used "ParseTree":http://rubyforge.org/projects/parsetree/ and had to require that explicitly in <code>lib/lockdown/init.rb</code>.
+
+h4. Setup the preinitializer.rb
+
+This step is simple.  In your <code>config/preinitializer.rb</code>, you need to get rails to load bundler in the path by adding:
+
+{% highlight ruby %}
+require "#{File.dirname(__FILE__)}/../vendor/bundler_gems/environment"
+{% endhighlight %}
+
+h5. Caveat
+
+In "Yehuda's blog post":http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/, he says to insert the follow code in there as well:
+
+{% highlight ruby %}
+class Rails::Boot
+  def run
+    load_initializer
+    extend_environment
+    Rails::Initializer.run(:set_load_path)
+  end
+ 
+  def extend_environment
+    Rails::Initializer.class_eval do
+      old_load = instance_method(:load_environment)
+      define_method(:load_environment) do
+        Bundler.require_env RAILS_ENV
+        old_load.bind(self).call
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+I couldn't get it to work quite right in the preinitializer.  I instead stuck it in <code>config/boot.rb</code>.
+
+h4. Monkey Patch the boot.rb
+
+Instead of putting loading of the environment gems in <code>config/preinitializer.rb</code>, I found it works better to monkey patch <code>config/boot.rb</code> directly (got this from the "gemcutter source":http://www.github.com/qrush/gemcutter).  We basically, need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of <code>config/boot.rb</code> right before the <code>Rails.boot!</code>:
+
+{% highlight ruby %}
+class Rails::Boot
+  def run
+    load_initializer
+    extend_environment
+    Rails::Initializer.run(:set_load_path)
+  end
+ 
+  def extend_environment
+    Rails::Initializer.class_eval do
+      old_load = instance_method(:load_environment)
+      define_method(:load_environment) do
+        Bundler.require_env RAILS_ENV
+        old_load.bind(self).call
+      end
+    end
+  end
+end
+{% endhighlight %}
+
+You can also refer to the <code>config/boot.rb</code> "on herocutter":http://github.com/hone/herocutter/commit/250fcbef213c099d06eb7dc31cc117eba7789c64#diff-1 to see what I changed exactly.
