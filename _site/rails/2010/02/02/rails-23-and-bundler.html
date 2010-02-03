@@ -38,7 +38,7 @@
 <p>The Gemfile is the manifest file that lists what gems are part of the application and what environment they belong in.  Bundler defaults the gems in <code>vendor/gems/</code> and the binaries in <code>bin/</code>.  Unfortunately, <code>vendor/gems/</code> is special to rails, so you need to specify a different directoy to use: <code>bundle_path "vendor/bundler_gems"</code>.  Specifying a gem is as easy as this:</p>
 <div class="highlight"><pre><code class="ruby"><span class="n">gem</span> <span class="s2">&quot;&lt;gem name&gt;&quot;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">options</span><span class="o">&gt;</span>
 </code></pre>
-</div><p>The options are well optional.  You can specify the version number.  You can also specify what to require if the lib doesn&#8217;t match gem name.  You will need to do this for gems from <a href="http://www.github.com">github</a>, since they&#8217;re prefixed with github usernames.  There&#8217;s also a <code>:only</code>  and <code>:except</code> options for specifying which environments the gem should be in. See the following example:</p>
+</div><p>The options are well, optional.  You can specify the version number.  You can also specify what to require if the lib doesn&#8217;t match gem name.  You will need to do this for gems from <a href="http://www.github.com">github</a>, since they&#8217;re prefixed with github usernames.  There&#8217;s also a <code>:only</code>  and <code>:except</code> options for specifying which environments the gem should be in. See the following example:</p>
 <div class="highlight"><pre><code class="ruby"><span class="n">gem</span> <span class="s1">&#39;mislav-will_paginate&#39;</span><span class="p">,</span> <span class="s1">&#39;2.3.8&#39;</span><span class="p">,</span> <span class="ss">:require_as</span> <span class="o">=&gt;</span> <span class="s1">&#39;will_paginate&#39;</span><span class="p">,</span> <span class="ss">:except</span> <span class="o">=&gt;</span> <span class="ss">:test</span>
 </code></pre>
 </div><p>You can use <code>source</code> to specify different gem sources outside of <a href="http://rubyforge.org/">rubyforge</a> and <a href="http://gemcutter.org">gemcutter</a> .  For instance, I have</p>
@@ -82,28 +82,9 @@
 <div class="highlight"><pre><code class="ruby"><span class="nb">require</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span><span class="si">}</span><span class="s2">/../vendor/bundler_gems/environment&quot;</span>
 </code></pre>
 </div><h5>Caveat</h5>
-<p>In <a href="http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/">Yehuda&#8217;s blog post</a>, he says to insert the follow code in there as well:</p>
-<div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Rails</span><span class="o">::</span><span class="no">Boot</span>
-  <span class="k">def</span> <span class="nf">run</span>
-    <span class="n">load_initializer</span>
-    <span class="n">extend_environment</span>
-    <span class="no">Rails</span><span class="o">::</span><span class="no">Initializer</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="ss">:set_load_path</span><span class="p">)</span>
-  <span class="k">end</span>
- 
-  <span class="k">def</span> <span class="nf">extend_environment</span>
-    <span class="no">Rails</span><span class="o">::</span><span class="no">Initializer</span><span class="o">.</span><span class="n">class_eval</span> <span class="k">do</span>
-      <span class="n">old_load</span> <span class="o">=</span> <span class="nb">instance_method</span><span class="p">(</span><span class="ss">:load_environment</span><span class="p">)</span>
-      <span class="n">define_method</span><span class="p">(</span><span class="ss">:load_environment</span><span class="p">)</span> <span class="k">do</span>
-        <span class="no">Bundler</span><span class="o">.</span><span class="n">require_env</span> <span class="no">RAILS_ENV</span>
-        <span class="n">old_load</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">self</span><span class="p">)</span><span class="o">.</span><span class="n">call</span>
-      <span class="k">end</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre>
-</div><p>I couldn&#8217;t get it to work quite right in the preinitializer.  I instead stuck it in <code>config/boot.rb</code>.</p>
+<p>In <a href="http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/">Yehuda&#8217;s blog post</a>, insert the environment loading code into the <code>config/preinitializer.rb</code>.  I couldn&#8217;t get it to work quite right.</p>
 <h4>Monkey Patch the boot.rb</h4>
-<p>Instead of putting loading of the environment gems in <code>config/preinitializer.rb</code>, I found it works better to monkey patch <code>config/boot.rb</code> directly (got this from the <a href="http://www.github.com/qrush/gemcutter">gemcutter source</a>).  We basically, need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of <code>config/boot.rb</code> right before the <code>Rails.boot!</code>:</p>
+<p>Instead of putting loading of the environment gems in <code>config/preinitializer.rb</code>, I found it works better to monkey patch <code>config/boot.rb</code> directly (got this from the <a href="http://www.github.com/qrush/gemcutter">gemcutter source</a>).  We basically need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of <code>config/boot.rb</code> right before the <code>Rails.boot!</code>:</p>
 <div class="highlight"><pre><code class="ruby"><span class="k">class</span> <span class="nc">Rails</span><span class="o">::</span><span class="no">Boot</span>
   <span class="k">def</span> <span class="nf">run</span>
     <span class="n">load_initializer</span>

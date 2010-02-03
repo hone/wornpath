@@ -4,7 +4,7 @@
  <title>wornpath</title>
  <link href="http://hone.heroku.com/atom.xml" rel="self"/>
  <link href="http://hone.heroku.com/"/>
- <updated>2010-02-02T14:39:04-06:00</updated>
+ <updated>2010-02-02T19:05:17-06:00</updated>
  <id>http://hone.heroku.com/</id>
  <author>
    <name>Terence Lee</name>
@@ -27,7 +27,7 @@
 &lt;p&gt;The Gemfile is the manifest file that lists what gems are part of the application and what environment they belong in.  Bundler defaults the gems in &lt;code&gt;vendor/gems/&lt;/code&gt; and the binaries in &lt;code&gt;bin/&lt;/code&gt;.  Unfortunately, &lt;code&gt;vendor/gems/&lt;/code&gt; is special to rails, so you need to specify a different directoy to use: &lt;code&gt;bundle_path &quot;vendor/bundler_gems&quot;&lt;/code&gt;.  Specifying a gem is as easy as this:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&amp;lt;gem name&amp;gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;&lt;p&gt;The options are well optional.  You can specify the version number.  You can also specify what to require if the lib doesn&amp;#8217;t match gem name.  You will need to do this for gems from &lt;a href=&quot;http://www.github.com&quot;&gt;github&lt;/a&gt;, since they&amp;#8217;re prefixed with github usernames.  There&amp;#8217;s also a &lt;code&gt;:only&lt;/code&gt;  and &lt;code&gt;:except&lt;/code&gt; options for specifying which environments the gem should be in. See the following example:&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;The options are well, optional.  You can specify the version number.  You can also specify what to require if the lib doesn&amp;#8217;t match gem name.  You will need to do this for gems from &lt;a href=&quot;http://www.github.com&quot;&gt;github&lt;/a&gt;, since they&amp;#8217;re prefixed with github usernames.  There&amp;#8217;s also a &lt;code&gt;:only&lt;/code&gt;  and &lt;code&gt;:except&lt;/code&gt; options for specifying which environments the gem should be in. See the following example:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;n&quot;&gt;gem&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;mislav-will_paginate&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;2.3.8&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:require_as&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&amp;#39;will_paginate&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:except&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:test&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;p&gt;You can use &lt;code&gt;source&lt;/code&gt; to specify different gem sources outside of &lt;a href=&quot;http://rubyforge.org/&quot;&gt;rubyforge&lt;/a&gt; and &lt;a href=&quot;http://gemcutter.org&quot;&gt;gemcutter&lt;/a&gt; .  For instance, I have&lt;/p&gt;
@@ -71,28 +71,9 @@
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;nb&quot;&gt;require&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;__FILE__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;/../vendor/bundler_gems/environment&amp;quot;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;&lt;h5&gt;Caveat&lt;/h5&gt;
-&lt;p&gt;In &lt;a href=&quot;http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/&quot;&gt;Yehuda&amp;#8217;s blog post&lt;/a&gt;, he says to insert the follow code in there as well:&lt;/p&gt;
-&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Boot&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;run&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;load_initializer&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;extend_environment&lt;/span&gt;
-    &lt;span class=&quot;no&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Initializer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:set_load_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
- 
-  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;extend_environment&lt;/span&gt;
-    &lt;span class=&quot;no&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Initializer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;class_eval&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;old_load&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;instance_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:load_environment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-      &lt;span class=&quot;n&quot;&gt;define_method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ss&quot;&gt;:load_environment&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt;
-        &lt;span class=&quot;no&quot;&gt;Bundler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;require_env&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;RAILS_ENV&lt;/span&gt;
-        &lt;span class=&quot;n&quot;&gt;old_load&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;call&lt;/span&gt;
-      &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;&lt;p&gt;I couldn&amp;#8217;t get it to work quite right in the preinitializer.  I instead stuck it in &lt;code&gt;config/boot.rb&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In &lt;a href=&quot;http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/&quot;&gt;Yehuda&amp;#8217;s blog post&lt;/a&gt;, insert the environment loading code into the &lt;code&gt;config/preinitializer.rb&lt;/code&gt;.  I couldn&amp;#8217;t get it to work quite right.&lt;/p&gt;
 &lt;h4&gt;Monkey Patch the boot.rb&lt;/h4&gt;
-&lt;p&gt;Instead of putting loading of the environment gems in &lt;code&gt;config/preinitializer.rb&lt;/code&gt;, I found it works better to monkey patch &lt;code&gt;config/boot.rb&lt;/code&gt; directly (got this from the &lt;a href=&quot;http://www.github.com/qrush/gemcutter&quot;&gt;gemcutter source&lt;/a&gt;).  We basically, need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of &lt;code&gt;config/boot.rb&lt;/code&gt; right before the &lt;code&gt;Rails.boot!&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;Instead of putting loading of the environment gems in &lt;code&gt;config/preinitializer.rb&lt;/code&gt;, I found it works better to monkey patch &lt;code&gt;config/boot.rb&lt;/code&gt; directly (got this from the &lt;a href=&quot;http://www.github.com/qrush/gemcutter&quot;&gt;gemcutter source&lt;/a&gt;).  We basically need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of &lt;code&gt;config/boot.rb&lt;/code&gt; right before the &lt;code&gt;Rails.boot!&lt;/code&gt;:&lt;/p&gt;
 &lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Rails&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Boot&lt;/span&gt;
   &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;run&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;load_initializer&lt;/span&gt;
