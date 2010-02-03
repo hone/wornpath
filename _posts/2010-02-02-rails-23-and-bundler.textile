@@ -21,7 +21,7 @@ The Gemfile is the manifest file that lists what gems are part of the applicatio
 gem "<gem name>", <options>
 {% endhighlight %}
 
-The options are well optional.  You can specify the version number.  You can also specify what to require if the lib doesn't match gem name.  You will need to do this for gems from "github":http://www.github.com, since they're prefixed with github usernames.  There's also a <code>:only</code>  and <code>:except</code> options for specifying which environments the gem should be in. See the following example:
+The options are well, optional.  You can specify the version number.  You can also specify what to require if the lib doesn't match gem name.  You will need to do this for gems from "github":http://www.github.com, since they're prefixed with github usernames.  There's also a <code>:only</code>  and <code>:except</code> options for specifying which environments the gem should be in. See the following example:
 
 {% highlight ruby %}
 gem 'mislav-will_paginate', '2.3.8', :require_as => 'will_paginate', :except => :test
@@ -85,33 +85,11 @@ require "#{File.dirname(__FILE__)}/../vendor/bundler_gems/environment"
 
 h5. Caveat
 
-In "Yehuda's blog post":http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/, he says to insert the follow code in there as well:
-
-{% highlight ruby %}
-class Rails::Boot
-  def run
-    load_initializer
-    extend_environment
-    Rails::Initializer.run(:set_load_path)
-  end
- 
-  def extend_environment
-    Rails::Initializer.class_eval do
-      old_load = instance_method(:load_environment)
-      define_method(:load_environment) do
-        Bundler.require_env RAILS_ENV
-        old_load.bind(self).call
-      end
-    end
-  end
-end
-{% endhighlight %}
-
-I couldn't get it to work quite right in the preinitializer.  I instead stuck it in <code>config/boot.rb</code>.
+In "Yehuda's blog post":http://yehudakatz.com/2009/11/03/using-the-new-gem-bundler-today/, insert the environment loading code into the <code>config/preinitializer.rb</code>.  I couldn't get it to work quite right.
 
 h4. Monkey Patch the boot.rb
 
-Instead of putting loading of the environment gems in <code>config/preinitializer.rb</code>, I found it works better to monkey patch <code>config/boot.rb</code> directly (got this from the "gemcutter source":http://www.github.com/qrush/gemcutter).  We basically, need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of <code>config/boot.rb</code> right before the <code>Rails.boot!</code>:
+Instead of putting loading of the environment gems in <code>config/preinitializer.rb</code>, I found it works better to monkey patch <code>config/boot.rb</code> directly (got this from the "gemcutter source":http://www.github.com/qrush/gemcutter).  We basically need to tell rails to load the right environment gems.  You can do this by adding this to the bottom of <code>config/boot.rb</code> right before the <code>Rails.boot!</code>:
 
 {% highlight ruby %}
 class Rails::Boot
