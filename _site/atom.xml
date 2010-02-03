@@ -4,7 +4,7 @@
  <title>wornpath</title>
  <link href="http://hone.heroku.com/atom.xml" rel="self"/>
  <link href="http://hone.heroku.com/"/>
- <updated>2010-02-02T19:05:17-06:00</updated>
+ <updated>2010-02-02T19:20:04-06:00</updated>
  <id>http://hone.heroku.com/</id>
  <author>
    <name>Terence Lee</name>
@@ -92,7 +92,9 @@
   &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;&lt;p&gt;You can also refer to the &lt;code&gt;config/boot.rb&lt;/code&gt; &lt;a href=&quot;http://github.com/hone/herocutter/commit/250fcbef213c099d06eb7dc31cc117eba7789c64#diff-1&quot;&gt;on herocutter&lt;/a&gt; to see what I changed exactly.&lt;/p&gt;</content>
+&lt;/div&gt;&lt;p&gt;You can also refer to the &lt;code&gt;config/boot.rb&lt;/code&gt; &lt;a href=&quot;http://github.com/hone/herocutter/commit/250fcbef213c099d06eb7dc31cc117eba7789c64#diff-1&quot;&gt;on herocutter&lt;/a&gt; to see what I changed exactly.&lt;/p&gt;
+&lt;h3&gt;Version Control&lt;/h3&gt;
+&lt;p&gt;You can ignore the &lt;code&gt;vendor/bundler_gems/&lt;/code&gt; directory since it gets created when running the &lt;code&gt;gem bundle&lt;/code&gt; command.&lt;/p&gt;</content>
  </entry>
  
  <entry>
