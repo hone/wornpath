@@ -112,3 +112,7 @@ end
 {% endhighlight %}
 
 You can also refer to the <code>config/boot.rb</code> "on herocutter":http://github.com/hone/herocutter/commit/250fcbef213c099d06eb7dc31cc117eba7789c64#diff-1 to see what I changed exactly.
+
+h3. Version Control
+
+You can ignore the <code>vendor/bundler_gems/</code> directory since it gets created when running the <code>gem bundle</code> command.
