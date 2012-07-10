@@ -4,7 +4,8 @@ gem "rack"
 gem "rack-contrib"
 gem "puma"
 
-group :development do
+group :compile do
   gem "RedCloth"
   gem "jekyll"
+  gem "rake"
 end
