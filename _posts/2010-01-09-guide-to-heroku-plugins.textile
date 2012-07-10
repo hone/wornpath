@@ -122,7 +122,7 @@ module Heroku::Command
 end
 {% endhighlight %}
 
-Finally, don’t forget to add an entry into the help system, so people know how to use your new fangled command.  ddollar has rewritten the old heroku help system in "heroku gem 1.5.3":http://github.com/heroku/heroku/commits/v1.5.3.  It's dead simple to add in help text.  For example my switch command uses this:
+Finally, don't forget to add an entry into the help system, so people know how to use your new fangled command.  ddollar has rewritten the old heroku help system in "heroku gem 1.5.3":http://github.com/heroku/heroku/commits/v1.5.3.  It's dead simple to add in help text.  For example my switch command uses this:
 
 {% highlight ruby %}
 Heroku::Command::Help.group('Switch Command') do |group|
