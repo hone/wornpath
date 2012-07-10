@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Rails 2.3 and Bundler
-category: rails
+categories: [rails, bundler]
 ---
 Here at "OtherInbox":http://www.otherinbox.com, we've had some issues dealing with gem dependencies using <code>config.gem</code>.  Luckily, "Carl Lerche":http://twitter.com/carllerche and "Yehuda Katz":http://yehudakatz.com/ have made "Bundler":http://github.com/wycats/bundler/ for us.  Bundler has great dependency resolution and just works(TM).  "They're also smoothing out deployment workflow issues.":http://yehudakatz.com/2010/02/01/bundler-0-9-heading-toward-1-0/
 
