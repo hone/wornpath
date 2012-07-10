@@ -4,13 +4,18 @@ title: hone.heroku.com
 ---
 {% assign first_post = site.posts.first %}
 <h2><a href="{{ first_post.url }}">{{ first_post.title }}</a></h2>
-<div id="date">published {{ first_post.date | date_to_string }}</div>
-<div id="categories">categories: 
-	{% for category in first_post.categories %}
-	<a href="/{{ category }}.html">{{ category }}</a> 
-	{% endfor %}
+<div>
+  <p><span>categories</span>: 
+    {% for category in first_post.categories %}
+    <a href="/{{ category }}.html">{{ category }}</a></li>
+    {% endfor %}
+     
+  </p>
+	<p id="date">{{ first_post.date | date_to_string }}</p>
 </div>
+
 {{ first_post.content }}
+
 <a id="more" href="{{ first_post.url }}#disqus_thread">Comments &raquo;</a>
 
 <hr />

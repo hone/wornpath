@@ -2,14 +2,16 @@
 layout: default
 ---
 <h2>{{ page.title }}</h2>
-<div id="date">published {{ page.date | date_to_string }}</div>
-<div id="categories">categories: 
-	{% for category in page.categories %}
-	<a href="/{{ category }}.html">{{ category }}</a> 
-	{% endfor %}
+<div>
+  <p><span>categories</span>: 
+    {% for category in page.categories %}
+    <a href="/{{ category }}.html">{{ category }}</a></li>
+    {% endfor %}
+     
+  </p>
+	<p id="date">{{ page.date | date_to_string }}</p>
 </div>
-<p>
+
 {{ content }}
-</p>
 <hr />
 <div id="disqus_thread"></div><script type="text/javascript" src="http://disqus.com/forums/wornpath/embed.js"></script><noscript><a href="http://disqus.com/forums/wornpath/?url=ref">View the discussion thread.</a></noscript><a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>

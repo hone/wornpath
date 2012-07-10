@@ -2,66 +2,54 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 	<head>
-		<title>wornpath - {{ page.title }}</title>
+		<title>hone.heroku.com | {{ page.title }}</title>
 		<link rel="stylesheet" type="text/css" href="/css/style.css" media="screen" />
 		<link rel="stylesheet" type="text/css" href="/css/syntax.css" media="screen" />
 		<meta name="author" content="Terence Lee" />
 	</head>
 	<body>
-		<div id="header">
-			<h1>wornpath</h1>
-			<h2>The journey of a software craftsman</h2>
-			<div id="menu">
-				<ul id="nav">
-					<li><a href="/">blog</a></li>
-					<li><a href="/about.html">about</a></li>
-				</ul>
-			</div>
-		</div>
-		<div id="content">
-			<div id="right">
+		<header>
+			<h1>hone.heroku.com</h1>
+		</header>
+
+		<nav id="menu">
+			<h3>nav</h3>
+			<ul>
+				<li><a href="/">blog</a></li>
+				<li><a href="/about.html">about</a></li>
+			</ul>
+
+			<h3>categories</h3>
+			<ul>
+				<li><a href="/heroku.html">heroku</a> ({{ site.categories.heroku | size }})</li>
+				<li><a href="/bundler.html">bundler</a> ({{ site.categories.bundler | size }})</li>
+				<li><a href="/rails.html">rails</a> ({{ site.categories.rails | size }})</li>
+			</ul>
+
+			<h3>links</h3>
+			<ul>
+				<li><a href="http://www.twitter.com/hone02">twitter</a></li>
+				<li><a href="http://www.github.com/hone/">github</a></li>
+				<li><a href="http://www.facebook.com/#/profile.php?ref=profile&id=5401111">facebook</a></li>
+				<li><a href="http://www.linkedin.com/in/hone02">linkedin</a></li>
+				<li><a href="http://www.workingwithrails.com/person/8768-terence-lee">working with rails</a></li>
+				<li><a href="/">kippt</a></li>
+				<li><a href="http://steamcommunity.com/profiles/76561197992155274">steam</a></li>
+				<li><a href="http://profiles.us.playstation.com/playstation/psn/profiles/hone02">playstation network</a></li>
+			</ul>
+
+			<h3>misc</h3>
+			<ul>
+				<li>licensed with <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">creative commons</a></li>
+				<li>hosted by <a href="http://www.heroku.com">heroku</a></li>
+			</ul>
+		</nav>
+		<div id="main">
+			<section id="container">
+				<article>
 				{{ content }}
-			</div>
-
-			<div id="left">
-				<div class="box">
-					<h2>categories:</h2>	
-					<ul>
-						<li><a href="/heroku.html">heroku</a> ({{ site.categories.heroku | size }})</li>
-						<li><a href="/rails.html">rails</a> ({{ site.categories.rails | size }})</li>
-					</ul>
-				</div>
-
-				<div class="box">
-					<h2>interwebs:</h2>	
-					<ul>
-						<li><a href="http://www.github.com/hone/">github</a></li>
-						<li><a href="http://www.linkedin.com/in/hone02">linkedin</a></li>
-						<li><a href="http://www.workingwithrails.com/person/8768-terence-lee">working with rails</a></li>
-						<li><a href="http://www.twitter.com/hone02">twitter</a></li>
-						<li><a href="http://www.facebook.com/#/profile.php?ref=profile&id=5401111">facebook</a></li>
-						<li><a href="http://profiles.us.playstation.com/playstation/psn/profiles/hone02">playstation network</a></li>
-						<li><a href="http://steamcommunity.com/profiles/76561197992155274">steam</a></li>
-					</ul>
-				</div>
-
-				<div class="box">
-					<h2>links :</h2>
-					<ul>
-						<li><a href="/atom.xml">feed</a></li>
-						<li><a href="http://www.github.com/hone/wornpath">code</a> @ <a href="http://www.github.com">github</a></li>
-						<li><a href="http://github.com/bry4n/rack-jekyll">rack-jekyll</a> powered</li>
-						<li>licensed with <a href="http://creativecommons.org/licenses/by-sa/3.0/us/">creative commons</a></li>
-						<li>hosted by <a href="http://www.heroku.com">heroku</a></li>
-					</ul>
-				</div>
-
-				<div class="box">
-					<div style="font-size: 0.8em;">Design by <a href="http://www.minimalistic-design.net">Minimalistic Design</a></div>
-				</div>
-			</div>
-		</div>
-		<script type="text/javascript">
+				</article>
+				<script type="text/javascript">
 //<![CDATA[
 (function() {
 	var links = document.getElementsByTagName('a');
@@ -84,6 +72,13 @@
 				var pageTracker = _gat._getTracker("UA-12387207-1");
 				pageTracker._trackPageview();
 				} catch(err) {}
-		</script>
+				</script>
+			</section>
+		</div>
+		<footer>
+			<div id="container">
+				<p>Hello. My name is Terence. <a href="http://heroku.com">heroku's ruby team</a>. <a href="http://gembundler.com">bundler core</a>. <a href="http://github.com/defunkt/resque">resque core</a>. <a href="http://railsgirls.com">railsgirls</a>. <a href="http://jhu.edu">hopkins alumni</a>.</p>
+			</div>
+		</footer>
 	</body>
 </html>
