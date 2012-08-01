@@ -4,7 +4,7 @@ title: about
 ---
 
 <div id="portrait"></div>
-<p class="flow">Hello. My name is Terence. I work at Heroku maintaining the Ruby stack and a slew of Open Source Software projects such as Bundler and Resque, as well as helping with the Rails Girls movement. When I'm not going to an awesome Heroku or Ruby event, I live in Austin, TX, the taco capital of America.</p>
+<p class="flow">Hello. My name is Terence. I work at Heroku maintaining the Ruby stack and a slew of Open Source Software projects such as "Bundler":http://gembundler.com and "Resque":http://github.com/defunkt/resque, as well as helping with the Rails Girls movement. When I'm not going to an awesome Heroku or Ruby event, I live in Austin, TX, the taco capital of America.</p>
 <p class="flow">(I love Friday hugs, EVERY DAY OF THE WEEK! Feel free to give me one when you see me!)</p>
 
 <p>&nbsp;</p>
