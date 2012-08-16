@@ -3,7 +3,7 @@ layout: post
 title: Resque Signals
 category: resque
 ---
-[Resque](http://github.com/defunkt/resque) is one of the major queuing libraries in Ruby. I've taken over maintenance of the project since January 2012. Over the last few months, we've been working on ironing out the last few major things in [Resque 1.x](http://github.com/defunkt/resque/tree/1-x-stable). One of the last holdouts is the way signals are handled.
+[Resque](http://github.com/defunkt/resque) is a small queuing library in Ruby. I've taken over maintenance of the project since January 2012. Over the last few months, we've been working on ironing out the last few major things in [Resque 1.x](http://github.com/defunkt/resque/tree/1-x-stable). One of the last holdouts is the way signals are handled.
 
 ## Problem
 
