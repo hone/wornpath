@@ -96,19 +96,7 @@ env VVERBOSE=1 QUEUE=* bundle exec rake resque:work
 With the log output we can see that when we send SIGTERM, the resque just kills the child immediately with no remorse.
 
     20:30:08 worker.1     | started with pid 18903
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: Starting worker hone-x220:18903:*
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: Registered signals
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: Checking archives
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: Checking test
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: Checking timeline
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: Sleeping for 5.0 seconds
-    20:30:08 worker.1     | ** [20:30:08 2012-08-15] 18903: resque-1.21.0: Waiting for *
-    20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18903: Checking archives
-    20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18903: Checking test
-    20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18903: Found job on test
     20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18903: got: (Job{test} | SleepJob | [30])
-    20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18903: resque-1.21.0: Forked 18946 at 1345080613
-    20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18946: resque-1.21.0: Processing test since 1345080613
     > Process.kill("TERM", 18903)
     20:30:23 worker.1     | ** [20:30:23 2012-08-15] 18903: Exiting...
     20:30:23 worker.1     | ** [20:30:23 2012-08-15] 18903: Killing child at 18946
@@ -127,16 +115,9 @@ env TERM_CHILD=1 VVERBOSE=1 QUEUE=* bundle exec rake resque:work
 In the logs we can see it actually executes the cleanup code and prints "omg job cleaned up!!!!".
 
     20:36:10 worker.1     | started with pid 21301
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: Starting worker hone-x220:21301:*
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: Registered signals
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: Checking archives
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: Checking test
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: Found job on test
     20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: got: (Job{test} | SleepJob | [30])
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21301: resque-1.21.0: Forked 21318 at 1345080971
-    20:36:11 worker.1     | ** [20:36:11 2012-08-15] 21318: resque-1.21.0: Processing test since 1345080971
-    20:36:20 worker.1     | ** [20:36:20 2012-08-15] 21301: Exiting...
     > Process.kill("TERM", 21301)
+    20:36:20 worker.1     | ** [20:36:20 2012-08-15] 21301: Exiting...
     20:36:20 worker.1     | ** [20:36:20 2012-08-15] 21301: Sending TERM signal to child 21318
     20:36:25 worker.1     | omg job cleaned up!!!!
     20:36:25 worker.1     | ** [20:36:25 2012-08-15] 21318: done: (Job{test} | SleepJob | [30])
@@ -153,16 +134,9 @@ env RESQUE_TERM_TIMEOUT=1 TERM_CHILD=1 VVERBOSE=1 QUEUE=* bundle exec rake resqu
 In the logs we can see the "omg job cleaned up!!!!" isn't printed.
 
     20:26:26 worker.1     | started with pid 17395
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: Starting worker hone-x220:17395:*
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: Registered signals
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: Checking archives
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: Checking test
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: Found job on test
     20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: got: (Job{test} | SleepJob | [30])
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17395: resque-1.21.0: Forked 17412 at 1345080386
-    20:26:26 worker.1     | ** [20:26:26 2012-08-15] 17412: resque-1.21.0: Processing test since 1345080386
-    20:26:49 worker.1     | ** [20:26:49 2012-08-15] 17395: Exiting...
     > Process.kill("TERM", 17395)
+    20:26:49 worker.1     | ** [20:26:49 2012-08-15] 17395: Exiting...
     20:26:49 worker.1     | ** [20:26:49 2012-08-15] 17395: Sending TERM signal to child 17412
     20:26:53 worker.1     | ** [20:26:53 2012-08-15] 17395: Sending KILL signal to child 17412
     20:26:53 worker.1     | process terminated
