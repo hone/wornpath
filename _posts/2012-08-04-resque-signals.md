@@ -53,7 +53,7 @@ class DatabaseBackupJob
   def self.perform
     # do backup work
   rescue SignalException
-    # wiret failure to database
+    # weird failure to database
   end
 end
 {% endhighlight %}
