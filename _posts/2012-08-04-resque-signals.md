@@ -18,7 +18,7 @@ If you treat the resque worker process like any other unix process, you'd probab
 
 ## Solution
 
-In Resque 1.22.0, we've addressed this issue by adding [a new signal handling path](https://github.com/defunkt/resque/blob/de26a891253be9f9642685918cb0e81f16ff992c/lib/resque/worker.rb#L349-366) that will be the default in Resque 2. The old way is deprecated as of this release. Since, we're held to semantic versioning, the old way is still the default. In order to opt-in you just need to set the environment variable `TERM_CHILD`. The changes include a new flow as well as reverting the trap from the parent in the child, so the child can now receive signals properly.
+In Resque 1.22.0, we've addressed this issue by adding [a new signal handling path](https://github.com/defunkt/resque/blob/de26a891253be9f9642685918cb0e81f16ff992c/lib/resque/worker.rb#L349-366) that will be the default in Resque 2. The old way is deprecated as of this release. Since, we're held to semantic versioning, the old way is still the default. In order to opt-in you just need to set the environment variable `TERM_CHILD`. The changes include a new flow as well as reverting the traps from the parent in the child, so the child can now receive signals properly.
 
 {% highlight sh %}
 $ TERM_CHILD=1 QUEUES=* rake resque:work
