@@ -3,7 +3,7 @@ layout: post
 title: Resque Signals
 category: resque
 ---
-[Resque](http://github.com/defunkt/resque) is a small redis backed queuing library written in Ruby by [Chris Wanstrath](http://chriswanstrath.com/). Using Resque, you can create background jobs that can be placed in multiple queues to be processed later. It also allows you to monitor your queues, workers, and job failures using a Sinatra web app. Chris does an excellent job explaining the history and reasoning for the project in his [original blog post](https://github.com/blog/542-introducing-resque).
+[Resque](http://github.com/defunkt/resque) is a small redis backed queuing library written in Ruby by [Chris Wanstrath](http://chriswanstrath.com/). Using Resque, you can create background jobs that can be placed in multiple queues to be processed later. It also allows you to monitor your queues, workers, and job failures using a [Sinatra](http://www.sinatrarb.com/) web app. Chris does an excellent job explaining the history and reasoning for the project in his [original blog post](https://github.com/blog/542-introducing-resque).
 
 In January 2012, I took over maintenance of the project. Over the last few months, we've been working on ironing out the last major issues in [Resque 1.x](http://github.com/defunkt/resque/tree/1-x-stable). One of the last holdouts is the way [POSIX signals](http://unixhelp.ed.ac.uk/CGI/man-cgi?signal+7) are handled. For those unfamiliar, signals are a form of interprocess communication to indicate a certain event or state change. Using signals, you can pause a running process, tell it to shutdown, or notify it that a certain time limit has passed.
 
