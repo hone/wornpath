@@ -55,7 +55,7 @@ class DatabaseBackupJob
   def self.perform
     # do backup work
   rescue SignalException
-    # weird failure to database
+    # write failure to database
   end
 end
 {% endhighlight %}
