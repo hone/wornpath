@@ -93,7 +93,7 @@ This is the old way we're handling signals. Here's the command to run this on Re
 env VVERBOSE=1 QUEUE=* bundle exec rake resque:work
 {% endhighlight %}
 
-With the log output we can see that when we send SIGTERM, the resque just kills the child immediately with no remorse.
+With the log output we can see that when we send SIGTERM, the parent worker just kills the child immediately with no remorse.
 
     20:30:08 worker.1     | started with pid 18903
     20:30:13 worker.1     | ** [20:30:13 2012-08-15] 18903: got: (Job{test} | SleepJob | [30])
