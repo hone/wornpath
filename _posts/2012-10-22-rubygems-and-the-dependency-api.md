@@ -24,4 +24,5 @@ gem 'rack'
 The source code for the app lives on github, <http://github.com/rubygems/bundler-api>. Please feel free to code review it. I'll try doing a separate blog post going over the code, especially the syncing code in detail.
 
 ## Other Information
-[Mailing list thread](https://groups.google.com/forum/?fromgroups=#!topic/rubygems-org/-xlwOYV9Bgw)
+* [Mailing list thread](https://groups.google.com/forum/?fromgroups=#!topic/rubygems-org/-xlwOYV9Bgw)
+* [History on Fetching the Source Index](http://robots.thoughtbot.com/post/2729333530/fetching-source-index-for-http-rubygems-org)
