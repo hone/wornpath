@@ -9,6 +9,7 @@ gem "pygmentize"
 
 group :compile do
   gem "RedCloth"
+  gem "rdiscount"
   gem "jekyll"
   gem "rake"
 end
